@@ -1,3 +1,5 @@
+using System.Drawing.Text;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
@@ -7,13 +9,18 @@ namespace RPG_Architect
 {
     public partial class Form1 : Form
     {
+        private string savingFile;
 
         private List<Character> characters = new List<Character>();
         public Form1()
         {
             InitializeComponent();
 
-            comboBoxAdditionalAttributes.Items.Clear();
+            LoadSettings();
+
+            
+
+        comboBoxAdditionalAttributes.Items.Clear();
             comboBoxAdditionalAttributes.Items.AddRange(new string[]
             {
         "Místo narození",
@@ -25,8 +32,59 @@ namespace RPG_Architect
         "Povolání v minulosti",
         "Osudový nepøítel"
             });
+            if (checkBoxAutoLoad.Checked)
+            {
+                if (savingFile != null)
+                {
+                    string jsonString = File.ReadAllText(savingFile);
+
+                    var importedCharacters = JsonConvert.DeserializeObject<List<Character>>(jsonString);
+
+                    if (importedCharacters != null)
+                    {
+                        characters.AddRange(importedCharacters);
+                        UpdateCharacterListBox();
+                        // MessageBox.Show("Postavy byly úspìšnì importovány.", "Hotovo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else {
+                    checkBoxAutoLoad.Checked = false;
+                    SaveSettings();
+                }
+            }
+        }
+        public class AppSettings
+        {
+            public bool AutoLoadEnabled { get; set; }
+            public string savingFilePath { get; set; }
         }
 
+        private void LoadSettings()
+        {
+            if (File.Exists("setup.json"))
+            {
+                string json = File.ReadAllText("setup.json");
+                var settings = JsonConvert.DeserializeObject<AppSettings>(json);
+
+                if (settings != null)
+                {
+                    checkBoxAutoLoad.Checked = settings.AutoLoadEnabled;
+                    savingFile = settings.savingFilePath;
+                }
+            }
+        }
+
+        private void SaveSettings()
+        {
+            var settings = new AppSettings
+            {
+                AutoLoadEnabled = checkBoxAutoLoad.Checked,
+                savingFilePath = savingFile
+            };
+
+            string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
+            File.WriteAllText("setup.json", json);
+        }
         public class Character
         {
             public string Name { get; set; }
@@ -78,7 +136,7 @@ namespace RPG_Architect
         }
         private void ExportCharactersToJson(string filePath)
         {
-            
+
 
             string jsonString = JsonConvert.SerializeObject(characters, Formatting.Indented);
             File.WriteAllText(filePath, jsonString);
@@ -184,7 +242,7 @@ namespace RPG_Architect
 
         private void Form1_Load_1(object sender, EventArgs e)
         {
-            string currentVersion = "0.1";
+            string currentVersion = "0.2";
             this.Text = "RPG Architect v" + currentVersion;
 
         }
@@ -300,7 +358,10 @@ namespace RPG_Architect
             {
                 ExportCharactersToJson(saveFileDialog.FileName);
                 MessageBox.Show("Postavy byly úspìšnì exportovány.", "Hotovo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                savingFile = saveFileDialog.FileName;
+                SaveSettings();
             }
+
         }
 
         private void buttonImport_Click(object sender, EventArgs e)
@@ -366,5 +427,18 @@ namespace RPG_Architect
         {
 
         }
+
+        private void numericUpDownAge_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBoxAutoLoad_CheckedChanged(object sender, EventArgs e)
+        {
+            SaveSettings();
+
+        }
+
+        
     }
 }

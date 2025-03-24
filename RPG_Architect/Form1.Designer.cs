@@ -49,6 +49,7 @@
             comboBoxAdditionalAttributes = new ComboBox();
             buttonAddAttribute = new Button();
             textBoxAttributeValue = new TextBox();
+            checkBoxAutoLoad = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)numericUpDownAge).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownStrength).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHealth).BeginInit();
@@ -75,6 +76,7 @@
             // 
             // listBoxCharacters
             // 
+            listBoxCharacters.Anchor = AnchorStyles.Top;
             listBoxCharacters.FormattingEnabled = true;
             listBoxCharacters.Location = new Point(926, 42);
             listBoxCharacters.Name = "listBoxCharacters";
@@ -159,6 +161,7 @@
             // 
             // richTextBoxDetails
             // 
+            richTextBoxDetails.Anchor = AnchorStyles.Top;
             richTextBoxDetails.Enabled = false;
             richTextBoxDetails.Location = new Point(9, 159);
             richTextBoxDetails.Name = "richTextBoxDetails";
@@ -170,6 +173,7 @@
             // 
             // richTextBox5
             // 
+            richTextBox5.Anchor = AnchorStyles.Top;
             richTextBox5.Location = new Point(428, 137);
             richTextBox5.Name = "richTextBox5";
             richTextBox5.Size = new Size(53, 27);
@@ -178,6 +182,7 @@
             // 
             // richTextBoxLore
             // 
+            richTextBoxLore.Anchor = AnchorStyles.Top;
             richTextBoxLore.Location = new Point(428, 159);
             richTextBoxLore.Name = "richTextBoxLore";
             richTextBoxLore.Size = new Size(492, 515);
@@ -207,6 +212,7 @@
             // 
             // richTextBox6
             // 
+            richTextBox6.Anchor = AnchorStyles.Top;
             richTextBox6.Location = new Point(926, 12);
             richTextBox6.Name = "richTextBox6";
             richTextBox6.Size = new Size(85, 27);
@@ -241,12 +247,25 @@
             textBoxAttributeValue.TabIndex = 20;
             textBoxAttributeValue.TextChanged += textBoxAttributeValue_TextChanged;
             // 
+            // checkBoxAutoLoad
+            // 
+            checkBoxAutoLoad.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            checkBoxAutoLoad.AutoSize = true;
+            checkBoxAutoLoad.Location = new Point(255, 1);
+            checkBoxAutoLoad.Name = "checkBoxAutoLoad";
+            checkBoxAutoLoad.Size = new Size(97, 24);
+            checkBoxAutoLoad.TabIndex = 22;
+            checkBoxAutoLoad.Text = "Auto load";
+            checkBoxAutoLoad.UseVisualStyleBackColor = true;
+            checkBoxAutoLoad.CheckedChanged += checkBoxAutoLoad_CheckedChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.Window;
             ClientSize = new Size(1151, 686);
+            Controls.Add(checkBoxAutoLoad);
             Controls.Add(textBoxAttributeValue);
             Controls.Add(buttonAddAttribute);
             Controls.Add(comboBoxAdditionalAttributes);
@@ -301,5 +320,6 @@
         private ComboBox comboBoxAdditionalAttributes;
         private Button buttonAddAttribute;
         private TextBox textBoxAttributeValue;
+        private CheckBox checkBoxAutoLoad;
     }
 }
