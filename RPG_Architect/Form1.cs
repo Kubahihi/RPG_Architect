@@ -92,12 +92,7 @@ namespace RPG_Architect
             public int Strength { get; set; }
             public int Health { get; set; }
             public string Lore { get; set; }
-
-
-
-            public Dictionary<string, string> AdditionalAttributes { get; set; } = new Dictionary<string, string>();
-
-
+            public Dictionary<string, string> AdditionalAttributes { get; set; }
 
             // Konstruktor 
             public Character(string name, int age, int strength, int health, string lore)
@@ -147,12 +142,11 @@ namespace RPG_Architect
             try
             {
                 string jsonString = File.ReadAllText(filePath);
-
-                // Používáme System.Text.Json pro deserializaci
                 var importedCharacters = JsonConvert.DeserializeObject<List<Character>>(jsonString);
 
                 if (importedCharacters != null)
                 {
+                    characters.Clear();
                     characters.AddRange(importedCharacters);
                     UpdateCharacterListBox();
                     MessageBox.Show("Postavy byly úspìšnì importovány.", "Hotovo", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -168,10 +162,6 @@ namespace RPG_Architect
             }
         }
 
-
-
-
-        // pøidání postavy
         private void button1_Click(object sender, EventArgs e)
         {
             string name = textBoxName.Text;
@@ -197,8 +187,6 @@ namespace RPG_Architect
             richTextBoxDetails.Clear();
             richTextBoxLore.Clear();
         }
-
-
 
         private void textBox1_TextChanged_1(object sender, EventArgs e)
         {
@@ -226,7 +214,21 @@ namespace RPG_Architect
                                                    $"Vìk: {selectedChar.Age}\n" +
                                                    $"Síla: {selectedChar.Strength}\n" +
                                                    $"Zdraví: {selectedChar.Health}\n" +
-                                                   $"Pøíbìh: {selectedChar.Lore}";
+                                                   $"Pøíbìh: {selectedChar.Lore}\n";
+                if (selectedChar.AdditionalAttributes != null && selectedChar.AdditionalAttributes.Any())
+                {
+                    richTextBoxDetails.AppendText($"Další atributy:\n");
+
+                    foreach (var attribute in selectedChar.AdditionalAttributes)
+                    {
+                        richTextBoxDetails.AppendText($"{attribute.Key}: {attribute.Value}\n");
+                    }
+                }
+                else
+                {
+                    // Pokud nejsou žádné další atributy, zobraz tuto informaci
+                    richTextBoxDetails.AppendText("Žádné další atributy.\n");
+                }
             }
         }
 
@@ -359,7 +361,10 @@ namespace RPG_Architect
                 ExportCharactersToJson(saveFileDialog.FileName);
                 MessageBox.Show("Postavy byly úspìšnì exportovány.", "Hotovo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 savingFile = saveFileDialog.FileName;
-                SaveSettings();
+                if (savingFile != null)
+                {
+                    SaveSettings();
+                }
             }
 
         }
@@ -373,6 +378,11 @@ namespace RPG_Architect
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 ImportCharactersFromJson(openFileDialog.FileName);
+                savingFile = openFileDialog.FileName;
+                if (savingFile != null)
+                {
+                    SaveSettings();
+                } 
             }
         }
 
@@ -436,9 +446,17 @@ namespace RPG_Architect
         private void checkBoxAutoLoad_CheckedChanged(object sender, EventArgs e)
         {
             SaveSettings();
-
+            if (checkBoxAutoLoad.Checked && !string.IsNullOrEmpty(savingFile) && File.Exists(savingFile))
+            {
+                ImportCharactersFromJson(savingFile);
+            }
+        }
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveSettings();
+            ExportCharactersToJson(savingFile);
+            // MessageBox.Show($"Ukládám soubor: {savingFile}", "Debug", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        
     }
 }

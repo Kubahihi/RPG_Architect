@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.FormClosing += MainForm_FormClosing;
             buttonAddCharacter = new Button();
             textBoxName = new TextBox();
             listBoxCharacters = new ListBox();
